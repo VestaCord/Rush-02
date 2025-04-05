@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 17:43:12 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/05 20:02:49 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 05:22:03 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,13 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "rush_02.h"
+#include <stdio.h>
 
 // NOTES
 // allowed func: write, read, close (unistd), malloc, free (stdlib), open (fcntl)
 // A program that takes a number as an argument and converts it to its written
 // letter value.
 // Malloc must be freed
-// • Example:
-// $> ./rus	open()
-// h-02 42 | cat -e
-// forty two$
-// $> ./rush-02 0 | cat -e
-// zero$
-// $> ./rush-02 10.4 | cat -e
-// Error$
-// $> ./rush-02 100000 | cat -e
-// one hundred thousand$
-// $> grep "20" numbers.dict | cat -e
-// 20 : hey everybody ! $
-// $> ./rush-02 20 | cat -e
-// hey everybody !$
-// 5
 
 // If the argument representing the number is not a valid and positive integer,
 // program must output "Error" followed by a newline.
@@ -59,6 +45,7 @@ int	ft_read_line(int file, int *line_n, char **line)
 	char	buffer[BUFFER_SIZE];
 
 	line_len = 0;
+	read_i = 1;
 	while (read_i > 0)
 	{
 		read_i = read(file, buffer + line_len, 1);
@@ -66,12 +53,16 @@ int	ft_read_line(int file, int *line_n, char **line)
 		{
 			buffer[line_len] = '\0';
 			*line = ft_strdup(buffer);
+			*line_n += 1;
 			return (E_SUCCESS);
 		}
+		line_len++;
 	}
 	if (read_i < 0)
-		write(2, "Unknown read error in ft_read_line\n", 36);
-	*line_n = -1;
+	{
+		ft_putstr(2, "Unknown read error in ft_read_line\n");
+		*line_n = -1;
+	}
 	return (E_FAILURE);
 }
 
@@ -118,7 +109,7 @@ int	ft_validate_line(int file, int *line_n, t_dict *dict)
 	while (line[i] == ' ' || (line[i] >= 9 && line[i] <= 13))
 		i++;
 	if (line[i])
-		(*dict).str = ft_strdup(line);
+		(*dict).str = ft_strdup(line + i);
 	free(line);
 	return(E_SUCCESS);
 }
@@ -138,6 +129,7 @@ int	ft_validate_dict(char *filename, t_dict *dict)
 	file = open(filename, 0);
 	if (file < 0)
 	{
+		printf("File failed to open\n");
 		write(2, "Dict Error\n", 12);
 		close(file);
 		return (-1);
@@ -145,7 +137,10 @@ int	ft_validate_dict(char *filename, t_dict *dict)
 	line_n = 0;
 	validity = E_RUNNING;
 	while (validity == E_RUNNING)
+	{
+		// printf("Checking line %d for key %ld\n", line_n, (*dict).nb);
 		validity = ft_validate_line(file, &line_n, dict);
+	}
 	if (validity == E_FAILURE)
 		write(2, "Dict Error\n", 12);
 	return (validity);
@@ -155,6 +150,19 @@ int	ft_validate_dict(char *filename, t_dict *dict)
 // Your program can take 1 or 2 arguments
 // Program must handle beyond unsigned int
 // Must parse numbers.dict, the values in it can be modified freely
+// CURRENTLY THESE CASES ARE FAILING BC THEY HAVENT BEEN IMPLEMETNED:
+// ./rush-02 10.4 SHOULD OUTPUT "Error\n" NOT "ten"
+// to do this, just use atof instead of atoi (need to make it urself),
+// then check if the float has non zero dp before casting to long
+// remove all printf obviously
+// now all u need to do is to write code to combine keys
+// ie 10 and 1000 become ten thousand
+// how i wld do this is, if nb is >= 1000, find log1000(nb)
+// then u get the xxillion.
+// then u find xxillion n - 1
+// then u find hundreds
+// then u find tens (iterate thru twenty to ninety
+// then u do the ones :)
 int	main(int argc, char **argv)
 {
 	char	*filename;
@@ -175,5 +183,5 @@ int	main(int argc, char **argv)
 		return (1);
 	if (ft_validate_number(dict.nb) == E_FAILURE || ft_validate_dict(filename, &dict) == E_FAILURE)
 		return (1);
-	ft_putstr((dict.str));
+	ft_putstr(1, (dict.str));
 }

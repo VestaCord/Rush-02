@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:21:15 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/05 20:01:55 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 04:56:57 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,14 @@ char	*ft_strdup(char *src)
 }
 
 // like printf("%s", str)
-void	ft_putstr(char *str)
+void	ft_putstr(int stream, char *str)
 {
 	int	i;
 
 	i = 0;
 	while (str[i] != '\0')
 	{
-		write(1, &str[i], 1);
+		write(stream, &str[i], 1);
 		i++;
 	}
 }
