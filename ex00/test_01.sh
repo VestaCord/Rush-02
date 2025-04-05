@@ -14,7 +14,7 @@ echo "expected: one hundred thousand$"
 # try changing numbers.dict later
 echo "grep "20" numbers.dict | cat -e"
 grep "20" numbers.dict | cat -e
-echo "expected: 20 : twenty$"
+echo "expected: 20	:	hey everybody !$"
 echo "./rush-02 20 | cat -e"
 ./rush-02 20 | cat -e
-echo "expected: twenty$"
+echo "expected: hey everybody !$"
