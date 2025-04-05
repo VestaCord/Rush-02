@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:21:55 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 04:57:12 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 05:27:57 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_dict
 }	t_dict;
 
 int		ft_atoi(char *str);
+double	ft_atof(char *str);
 char	*ft_strdup(char *src);
 void	ft_putstr(int stream, char *str);
 #endif

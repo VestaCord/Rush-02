@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 17:43:12 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 05:22:03 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 05:34:15 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,17 @@
 
 // If the argument representing the number is not a valid and positive integer,
 // program must output "Error" followed by a newline.
-int	ft_validate_number(long	nb)
+int	ft_validate_number(double nb_temp, long *nb)
 {
-	if (nb < 0)
+	long	nb_int_temp;
+
+	nb_int_temp = (long)nb_temp;
+	if (nb_temp < 0 || (nb_temp - nb_int_temp) != 0.0)
 	{
 		write(2, "Error\n", 7);
 		return (-1);
 	}
+	*nb = nb_temp;
 	return (0);
 }
 
@@ -166,22 +170,24 @@ int	ft_validate_dict(char *filename, t_dict *dict)
 int	main(int argc, char **argv)
 {
 	char	*filename;
+	double	nb_temp;
 	t_dict	dict;
 	const char	*filename_default = "numbers.dict";
 
 	if (argc == 2)
 	{
-		dict.nb = ft_atoi(argv[1]);
+		nb_temp = ft_atof(argv[1]);
 		filename = (char *)filename_default;
 	}
 	else if (argc == 3)
 	{
-		dict.nb = ft_atoi(argv[2]);
+		nb_temp = ft_atof(argv[2]);
 		filename = argv[1];
 	}
 	else
 		return (1);
-	if (ft_validate_number(dict.nb) == E_FAILURE || ft_validate_dict(filename, &dict) == E_FAILURE)
+	if (ft_validate_number(nb_temp, &dict.nb) == E_FAILURE || ft_validate_dict(filename, &dict) == E_FAILURE)
 		return (1);
 	ft_putstr(1, (dict.str));
+	ft_putstr(1, "\n");
 }

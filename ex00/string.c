@@ -6,12 +6,49 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:21:15 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 04:56:57 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 05:27:23 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
+
+// atoi but float
+double	ft_atof(char *str)
+{
+	double	sum;
+	long	sum_power;
+	int	i;
+	int	sign;
+
+	i = 0;
+	sum = 0;
+	sum_power = 1;
+	sign = 1;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		++i;
+	if (str[i] == '-')
+	{
+		sign *= -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		sum = (sum * 10) + (str[i] - '0');
+		i++;
+	}
+	if (str[i] == '.')
+	{
+		i++;
+		while (str[i] >= '0' && str[i] <= '9')
+		{
+			sum = (sum * 10) + (str[i] - '0');
+			sum_power *= 10;
+			i++;
+		}
+	}
+	return (sign * sum / sum_power);
+}
 
 // convert a string to integer based on isspace(3)
 int	ft_atoi(char *str)
