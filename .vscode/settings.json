@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"*.container": "shellscript",
+		"*.network": "shellscript",
+		"*.pod": "shellscript",
+		"stdlib.h": "c"
+	}
+}

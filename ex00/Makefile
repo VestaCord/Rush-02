@@ -1,5 +1,9 @@
+# Your source code will be compiled as follows:
+# make fclean
+# make
+# Executable name: rush-02
 NAME	= rush-02
-SRCS	= rush-02.c
+SRCS	= rush_02.c string.c
 
 OBJS	= ${SRCS:.c=.o}
 
