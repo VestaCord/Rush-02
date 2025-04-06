@@ -6,41 +6,50 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:21:15 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 16:39:50 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 22:48:20 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
 
-// atoi but float
 double	ft_atof(char *str)
 {
-	double	sum;
-	long	sum_power;
-	int		i;
-	int		sign;
+    double sum_integer = 0.0;
+    double sum_fractional = 0.0;
+    long fractional_power = 1;
+    int i = 0;
+    int sign = 1;
+    int decimal_point_found = 0;
+    while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13)) {
+        i++;
+    }
 
-	i = 0;
-	sum = 0;
-	sum_power = 1;
-	sign = 1;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		++i;
-	if (str[i++] == '-')
-		sign *= -1;
-	while (str[i] >= '0' && str[i] <= '9')
-		sum = (sum * 10) + (str[i++] - '0');
-	if (str[i++] == '.')
-	{
-		while (str[i] >= '0' && str[i] <= '9')
-		{
-			sum = (sum * 10) + (str[i] - '0');
-			sum_power *= 10;
-			i++;
-		}
-	}
-	return (sign * sum / sum_power);
+    if (str[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (str[i] == '+') {
+    }
+
+    while (str[i] >= '0' && str[i] <= '9') {
+        sum_integer = (sum_integer * 10.0) + (str[i] - '0');
+        i++;
+    }
+
+    if (str[i] == '.') {
+        decimal_point_found = 1;
+        i++;
+        while (str[i] >= '0' && str[i] <= '9') {
+            sum_fractional = (sum_fractional * 10.0) + (str[i] - '0');
+            fractional_power *= 10;
+            i++;
+        }
+    }
+    if (decimal_point_found) {
+        return sign * (sum_integer + (sum_fractional / fractional_power));
+    } else {
+        return sign * sum_integer;
+    }
 }
 
 // convert a string to integer based on isspace(3)

@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 17:43:12 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 16:45:28 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 23:01:00 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,117 +37,63 @@ int	ft_validate_number(double nb_temp)
 	return (0);
 }
 
-// returns ptr to line by allocating mem, moves seekptr to next line
-// sets line to -1 if EOF
-// read() returns 0 on reaching file end, and <0 if unknown error.
-// Skips empty lines in the dictionary.
-int	ft_read_line(int file, int *line_n, char **line)
+// shortcut dict search and print for 3 digit only
+int	ft_put_short(char *filename, int nb)
 {
-	int		line_len;
-	int		read_i;
-	char	buffer[BUFFER_SIZE];
+	int		status;
+	t_dict	tmp;
 
-	line_len = 0;
-	read_i = 1;
-	while (read_i > 0)
-	{
-		read_i = read(file, buffer + line_len, 1);
-		if (buffer[line_len] == '\n')
-		{
-			buffer[line_len] = '\0';
-			*line = ft_strdup(buffer);
-			*line_n += 1;
-			return (E_SUCCESS);
-		}
-		line_len++;
-	}
-	if (read_i < 0)
-	{
-		ft_putstr(2, "Unknown read error in ft_read_line\n");
-		*line_n = -1;
-	}
-	return (E_FAILURE);
+	tmp.nb = ft_itoa(nb);
+	status = ft_validate_dict(filename, &tmp);
+	ft_putstr(1, tmp.str);
+	free(tmp.nb);
+	free(tmp.str);
+	return (status);
 }
 
-// DICTIONARY RULES
-// ◦ The dictionary will always have at least the keys contained in the reference
-// dictionary. Their values can be modified, more entries can be added, but the
-// initial keys can’t be remove// 
-// also checks if every step of the rule is obeyed:
-// checks for number, then colon, then printable
-// [a number][0 to n spaces]:[0 to n spaces][any printable characters]\n
-// Returns -1 if invalid, 0 nb not in valid line, 1 if found 
-int	ft_validate_line(int file, int *line_n, t_dict *dict)
+// shd implement error checking for putshort.
+int ft_print_triple(char *filename, char *str)
 {
-	int		i;
-	char	*line;
-	int		dec_places;
-	int		rule;
-	// if EOF, return error
-	if (ft_read_line(file, line_n, &line) == E_FAILURE)
+	int		tmp;
+	int		hundreds;
+	int		tens;
+	int		ones;
+
+	tmp = ft_atoi(str);
+	if (tmp > 999)
+	{
+		ft_putstr(2, "invalid triple\n");
 		return (E_FAILURE);
-	i = 0;
-	dec_places = 0;
-	rule = 0;
-	while ((line[i] >= '0' && line[i] <= '9') || ((*dict).nb[i] >= '0' && (*dict).nb[i] <= '9'))
-	{
-		dec_places++;
-		rule = 1;
-		i++;
 	}
-	if (ft_strncmp((*dict).nb, line, dec_places) != 0)
+	if (tmp > 99)
 	{
-		free(line);
-		return (E_RUNNING);
+		hundreds = tmp / 100;
+		tens = (tmp % 100) / 10; //  store tens digit
 	}
-	while (line[i] == ' ' || (line[i] >= 9 && line[i] <= 13))
-		i++;
-	if (line[i] == ':' && rule++ == 1) // check dict line for colon, else fails
-		i++;
 	else
+		tens = tmp / 10;
+	ones = (tmp % 10); // store ones digit
+	tmp %= 100; // store ten and one 
+	if (hundreds)
 	{
-		free(line);
-		return (E_FAILURE);
+		ft_put_short(filename, hundreds);
+		ft_putstr(1, " ");
+		ft_put_short(filename, 100);
 	}
-	while (line[i] == ' ' || (line[i] >= 9 && line[i] <= 13))
-		i++;
-	if (line[i])
-		(*dict).str = ft_strdup(line + i);
-	free(line);
-	return(E_SUCCESS);
-}
-
-// Outputs "Dict Error\n" if invalid dictionary syntax or no conversion
-// for provided number. Returns -1 if error and 1 if string found
-// essentially propagates ft_validate_line
-// basically, it crawls the dict line by line, until it finds a valid match
-// according to dictionary rule:
-// [a number][0 to n spaces]:[0 to n spaces][any printable characters]\n
-int	ft_validate_dict(char *filename, t_dict *dict)
-{
-	int	file;
-	int	line_n;
-	int	validity;
-
-	file = open(filename, 0);
-	if (file < 0)
+	if (tens)
 	{
-		printf("File failed to open\n");
-		write(2, "Dict Error\n", 12);
-		close(file);
-		return (-1);
+		if (hundreds)
+			ft_putstr(1, " and ");
+		if (tmp < 20 || ones == 0) // 11 12 13 14 .. 19 20 30 .. 90
+			ft_put_short(filename, tmp);
+		else
+		{
+			ft_put_short(filename, (tens * 10)); // 21 22 .. 29 31 .. 91 91 .. 98 99
+			ft_putstr(1, "-");
+			ft_put_short(filename, ones);
+		}
 	}
-	line_n = 0;
-	validity = E_RUNNING;
-	while (validity == E_RUNNING)
-	{
-		// printf("Checking line %d for key %ld\n", line_n, (*dict).nb);
-		validity = ft_validate_line(file, &line_n, dict);
-	}
-	if (validity == E_FAILURE)
-		write(2, "Dict Error\n", 12);
-	return (validity);
-	close (file);
+	return (E_SUCCESS);
 }
 
 // Your program can take 1 or 2 arguments
@@ -170,7 +116,7 @@ int	main(int argc, char **argv)
 {
 	char	*filename;
 	double	nb_temp;
-	t_dict	dict;
+	t_dict dict;
 	const char	*filename_default = "numbers.dict";
 
 	if (argc == 2)
@@ -187,8 +133,10 @@ int	main(int argc, char **argv)
 	}
 	else
 		return (1);
-	if (ft_validate_number(nb_temp) == E_FAILURE || ft_validate_dict(filename, &dict) == E_FAILURE)
+	// if (ft_validate_number(nb_temp) == E_FAILURE || ft_validate_dict(filename, &dict) == E_FAILURE)
+	if (ft_validate_number(nb_temp) == E_FAILURE)
 		return (1);
-	ft_putstr(1, (dict.str));
+	ft_print_triple(filename, dict.nb);
+	// ft_putstr(1, (dict.str));
 	ft_putstr(1, "\n");
 }
