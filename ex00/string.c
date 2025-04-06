@@ -6,7 +6,7 @@
 /*   By: vtian <vtian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 18:21:15 by vtian             #+#    #+#             */
-/*   Updated: 2025/04/06 05:27:23 by vtian            ###   ########.fr       */
+/*   Updated: 2025/04/06 16:39:50 by vtian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ double	ft_atof(char *str)
 {
 	double	sum;
 	long	sum_power;
-	int	i;
-	int	sign;
+	int		i;
+	int		sign;
 
 	i = 0;
 	sum = 0;
@@ -27,19 +27,12 @@ double	ft_atof(char *str)
 	sign = 1;
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		++i;
-	if (str[i] == '-')
-	{
+	if (str[i++] == '-')
 		sign *= -1;
-		i++;
-	}
 	while (str[i] >= '0' && str[i] <= '9')
+		sum = (sum * 10) + (str[i++] - '0');
+	if (str[i++] == '.')
 	{
-		sum = (sum * 10) + (str[i] - '0');
-		i++;
-	}
-	if (str[i] == '.')
-	{
-		i++;
 		while (str[i] >= '0' && str[i] <= '9')
 		{
 			sum = (sum * 10) + (str[i] - '0');
@@ -109,4 +102,18 @@ void	ft_putstr(int stream, char *str)
 		write(stream, &str[i], 1);
 		i++;
 	}
+}
+
+int	ft_strncmp(char *s1, char *s2, unsigned int n)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		if (s1[i] != s2[i] || s1[i] == '\0')
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (0);
 }
